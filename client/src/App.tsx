@@ -4,10 +4,6 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Box } from '@mui/material';
 import EditorMap from "./pages/EditorMap";
-<Routes>
-  {/* existing routes */}
-  <Route path="/editor" element={<EditorMap />} />
-</Routes>
 
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { SocketProvider } from './contexts/SocketContext';
@@ -23,6 +19,7 @@ import SimpleProjectEditor from './components/Project/SimpleProjectEditor';
 import FloorPlanGenerator from './components/FloorPlan/FloorPlanGenerator';
 import PricePrediction from './components/PricePrediction/PricePrediction';
 import Chatbot from './components/Chatbot/Chatbot';
+import MapView from './components/Map/MapView';
 
 const APPLICATION_THEME = createTheme({
   palette: {
@@ -95,7 +92,7 @@ const AuthenticatedRoutes: React.FC = () => {
             path="/floorplan" 
             element={
               <ProtectedRoute>
-                <FloorPlanGenerator />
+                <Navigate to="/editor" replace />
               </ProtectedRoute>
             } 
           />
@@ -114,6 +111,22 @@ const AuthenticatedRoutes: React.FC = () => {
                 <Chatbot />
               </ProtectedRoute>
             } 
+          />
+          <Route 
+            path="/editor"
+            element={
+              <ProtectedRoute>
+                <EditorMap />
+              </ProtectedRoute>
+            }
+          />
+          <Route 
+            path="/maps"
+            element={
+              <ProtectedRoute>
+                <MapView />
+              </ProtectedRoute>
+            }
           />
           <Route 
             path="/project/:id" 

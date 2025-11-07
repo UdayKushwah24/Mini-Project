@@ -2,6 +2,8 @@ const express = require('express');
 const { auth } = require('../middleware/auth');
 
 const router = express.Router();
+const { spawn } = require('child_process');
+const path = require('path');
 
 /**
  * Simple ML-based House Price Prediction
@@ -139,7 +141,7 @@ router.post('/predict', auth, async (req, res) => {
       message: 'Price prediction completed',
       prediction,
       inputFeatures: features,
-      currency: 'USD',
+      currency: 'INR',
       disclaimer: 'This is an estimated price based on general market trends. Actual prices may vary based on specific location and market conditions.'
     });
   } catch (error) {
@@ -220,4 +222,54 @@ router.get('/market-trends', (req, res) => {
   res.json(trends);
 });
 
+/**
+ * POST /api/price-prediction/ml-predict
+ * Calls the Python prediction script (uses provided model.pkl + encoder.pkl)
+ */
+router.post('/ml-predict', auth, async (req, res) => {
+  try {
+    const scriptPath = path.join(__dirname, '..', 'PricePrediction', 'predict.py');
+
+    // spawn python process
+    const py = spawn('python', [scriptPath], { cwd: path.join(__dirname, '..') });
+
+    let stdout = '';
+    let stderr = '';
+
+    py.stdout.on('data', chunk => { stdout += chunk.toString(); });
+    py.stderr.on('data', chunk => { stderr += chunk.toString(); });
+
+    py.on('error', err => {
+      console.error('Failed to start python process:', err);
+      return res.status(500).json({ success: false, message: 'Failed to start python process', error: err.message });
+    });
+
+    py.on('close', code => {
+      if (code !== 0) {
+        console.error('Python prediction error:', stderr);
+        return res.status(500).json({ success: false, message: 'Python prediction failed', detail: stderr });
+      }
+
+      try {
+        const out = JSON.parse(stdout);
+        if (out.error) {
+          return res.status(400).json({ success: false, message: 'Prediction error', detail: out });
+        }
+        return res.json({ success: true, message: 'Prediction completed', prediction: out, input: req.body });
+      } catch (err) {
+        console.error('Invalid JSON from python:', err, stdout);
+        return res.status(500).json({ success: false, message: 'Invalid response from python script', raw: stdout });
+      }
+    });
+
+    // send input JSON to python stdin
+    py.stdin.write(JSON.stringify(req.body));
+    py.stdin.end();
+  } catch (error) {
+    console.error('ml-predict error:', error);
+    res.status(500).json({ success: false, message: 'Server error', error: error.message });
+  }
+});
+
 module.exports = router;
+

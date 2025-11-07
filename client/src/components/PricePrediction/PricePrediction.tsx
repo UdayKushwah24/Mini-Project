@@ -18,7 +18,8 @@ import {
   Divider
 } from '@mui/material';
 import {
-  AttachMoney as MoneyIcon,
+  // use rupee icon instead of dollar
+  CurrencyRupee as MoneyIcon,
   TrendingUp as TrendIcon
 } from '@mui/icons-material';
 import api from '../../services/api';
@@ -84,9 +85,9 @@ const PricePrediction: React.FC = () => {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'INR',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
     }).format(amount);

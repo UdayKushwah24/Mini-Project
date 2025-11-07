@@ -104,27 +104,27 @@ router.get('/:projectId/csv', auth, validateObjectId('projectId'), async (req, r
       csvData.push({
         category: 'Cost Estimation',
         field: 'Materials',
-        value: `$${cost.materials}`
+  value: `₹${cost.materials}`
       });
       csvData.push({
         category: 'Cost Estimation',
         field: 'Labor',
-        value: `$${cost.labor}`
+  value: `₹${cost.labor}`
       });
       csvData.push({
         category: 'Cost Estimation',
         field: 'Permits',
-        value: `$${cost.permits}`
+  value: `₹${cost.permits}`
       });
       csvData.push({
         category: 'Cost Estimation',
         field: 'Equipment',
-        value: `$${cost.equipment}`
+  value: `₹${cost.equipment}`
       });
       csvData.push({
         category: 'Cost Estimation',
         field: 'Total',
-        value: `$${cost.total}`
+  value: `₹${cost.total}`
       });
     }
 
@@ -145,7 +145,7 @@ router.get('/:projectId/csv', auth, validateObjectId('projectId'), async (req, r
           csvData.push({
             category: 'Materials',
             field: `Material ${index + 1} - Price Per Unit`,
-            value: `$${material.pricePerUnit}`
+            value: `₹${material.pricePerUnit}`
           });
         }
       });
@@ -232,7 +232,7 @@ router.get('/:projectId/json', auth, validateObjectId('projectId'), async (req, 
 
 // Generate HTML content for PDF report
 function generateProjectReportHTML(project) {
-  const formatCurrency = (amount) => `$${amount.toLocaleString()}`;
+  const formatCurrency = (amount) => `₹${amount.toLocaleString('en-IN')}`;
   const formatDate = (date) => new Date(date).toLocaleDateString();
 
   return `

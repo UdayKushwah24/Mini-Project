@@ -5,6 +5,36 @@ const { validateObjectId } = require('../middleware/validateObjectId');
 
 const router = express.Router();
 
+// Simple save-layout endpoint for map polygons (accepts coordinates + area)
+// This endpoint is intentionally lightweight: it logs the received layout and
+// returns a success response. You can later wire this into a Project document
+// or a dedicated MapLayout model depending on your persistence needs.
+router.post('/save-layout', async (req, res) => {
+  try {
+    const { coordinates, area } = req.body;
+
+    if (!coordinates || !Array.isArray(coordinates) || coordinates.length === 0) {
+      return res.status(400).json({ message: 'Coordinates are required' });
+    }
+
+    // Basic server-side validation passed — persist or log for now
+    const saved = {
+      id: Date.now().toString(),
+      coordinates,
+      area,
+      createdAt: new Date().toISOString(),
+    };
+
+    // For now we simply log. Replace this with a DB save when you want persistence.
+    console.log('Map layout saved (temporary):', saved);
+
+    return res.json({ message: 'Layout saved', layoutId: saved.id });
+  } catch (error) {
+    console.error('Save layout error:', error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // Get map data for a project
 router.get('/:projectId', auth, validateObjectId('projectId'), async (req, res) => {
   try {

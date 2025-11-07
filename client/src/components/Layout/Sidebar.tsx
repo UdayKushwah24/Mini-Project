@@ -46,6 +46,11 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
       path: '/price-prediction',
     },
     {
+      text: 'Plot Map',
+      icon: <MapIcon />,
+      path: '/maps',
+    },
+    {
       text: 'AI Chatbot',
       icon: <ChatIcon />,
       path: '/chatbot',
