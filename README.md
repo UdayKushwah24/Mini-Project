@@ -191,4 +191,4 @@ For support and questions, please open an issue on GitHub or contact the develop
 
 ---
 
-Built with ❤️ by Aman Kushwah
+Built with ❤️ by Uday Kushwah
